@@ -2,8 +2,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="Triangulation.MainWindow"
         Title="Triangulation">
-    Welcome to Avalonia!
+	<StackPanel>
+		<Canvas>
+			<Ellipse Width="30" Height="30" Fill="Black"
+					 Margin="-15"
+					 Canvas.Left="100"
+					 Canvas.Top="200"/>
+			<Ellipse Width="30" Height="30" Fill="Black"
+					 Margin="-15"
+					 Canvas.Left="400"
+					 Canvas.Top="100"/>
+			<Ellipse Width="30" Height="30" Fill="Black"
+					 Margin="-15"
+					 Canvas.Left="400"
+					 Canvas.Top="500"/>
+		</Canvas>
+	</StackPanel>
 </Window>

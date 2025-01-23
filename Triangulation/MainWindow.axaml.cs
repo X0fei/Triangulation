@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
+using Avalonia.Media;
 
 namespace Triangulation
 {
