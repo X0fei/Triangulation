@@ -7,18 +7,47 @@
         Title="Triangulation">
 	<StackPanel>
 		<Canvas>
-			<Ellipse Width="30" Height="30" Fill="Black"
-					 Margin="-15"
+			<!--Вышка 1-->
+			<Ellipse Width="5" Height="5" Fill="Black"
+					 Margin="-2.5"
 					 Canvas.Left="100"
 					 Canvas.Top="200"/>
-			<Ellipse Width="30" Height="30" Fill="Black"
-					 Margin="-15"
+			<!--Радиус вышки 1-->
+			<Ellipse Width="500" Height="500" Fill="Green"
+					 Opacity="150"
+					 Margin="-250"
+					 Canvas.Left="100"
+					 Canvas.Top="200"/>
+			
+			<!--Вышка 2-->
+			<Ellipse Width="5" Height="5" Fill="Black"
+					 Margin="-2.5"
 					 Canvas.Left="400"
 					 Canvas.Top="100"/>
-			<Ellipse Width="30" Height="30" Fill="Black"
-					 Margin="-15"
+			<!--Радиус вышки 2-->
+			<Ellipse Width="500" Height="500" Fill="Green"
+					 Opacity="150"
+					 Margin="-250"
+					 Canvas.Left="400"
+					 Canvas.Top="100"/>
+			
+			<!--Вышка 3-->
+			<Ellipse Width="5" Height="5" Fill="Black"
+					 Margin="-2.5"
 					 Canvas.Left="400"
 					 Canvas.Top="500"/>
+			<!--Радиус вышки 3-->
+			<Ellipse Width="500" Height="500" Fill="Green"
+					 Opacity="150"
+					 Margin="-250"
+					 Canvas.Left="400"
+					 Canvas.Top="500"/>
+			
+			<!--Искомое устройство-->
+			<Ellipse Width="5" Height="5" Fill="Red"
+					 Margin="-2.5"
+					 Canvas.Left="300"
+					 Canvas.Top="300"/>
 		</Canvas>
 	</StackPanel>
 </Window>
