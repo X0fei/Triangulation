@@ -1,38 +1,47 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using System;
+using Triangulation.Models;
+using Triangulation.Services;
 
 namespace Triangulation.Behaviors
 {
+    /// <summary>
+    /// Позволяет перемещать объект с помощью мыши.
+    /// </summary>
     public class DraggablePointBehavior
     {
-        private bool _isDragging = false;
-        private Control? _target;
-        private Avalonia.Point _startMousePosition;
-        private Avalonia.Point _startControlPosition;
+        private bool _isDragging = false; // Флаг, отслеживающий, тянем ли объект
+        private Control? _target; // Объект, который мы перетаскиваем
+        private Point _startMousePosition; // Начальная позиция мыши при начале перетаскивания
+        private Point _startControlPosition; // Начальная позиция объекта
 
-        public event Action<double, double>? OnDragEnded;
-
+        /// <summary>
+        /// Подключает поведение перетаскивания к переданному элементу.
+        /// </summary>
+        /// <param name="control">Элемент, который будет перемещаться.</param>
         public void Attach(Control control)
         {
             _target = control;
+
+            //"Подписываем" объект на события
             _target.PointerPressed += OnPointerPressed;
             _target.PointerMoved += OnPointerMoved;
-            _target.PointerReleased += OnPointerReleased;
+            //_target.PointerReleased += OnPointerReleased;
+            _target.PointerEntered += OnPointerEnter;
+            _target.PointerExited += OnPointerLeave;
         }
 
         private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (_target == null) return;
 
-            var parent = _target.GetVisualParent();
-            if (parent == null) return;
-
             _isDragging = true;
-            _startMousePosition = e.GetPosition(parent);
-            _startControlPosition = new Avalonia.Point(Canvas.GetLeft(_target), Canvas.GetTop(_target));
-
+            _startMousePosition = e.GetPosition(_target.Parent as Visual);
+            _startControlPosition = new Point(Canvas.GetLeft(_target), Canvas.GetTop(_target));
             _target.Cursor = new Cursor(StandardCursorType.Hand);
         }
 
@@ -40,27 +49,62 @@ namespace Triangulation.Behaviors
         {
             if (!_isDragging || _target == null) return;
 
-            var parent = _target.GetVisualParent();
-            if (parent == null) return;
+            Point currentMousePosition = e.GetPosition(_target.Parent as Visual);
+            double offsetX = currentMousePosition.X - _startMousePosition.X;
+            double offsetY = currentMousePosition.Y - _startMousePosition.Y;
 
-            var currentMousePosition = e.GetPosition(parent);
-            var offsetX = currentMousePosition.X - _startMousePosition.X;
-            var offsetY = currentMousePosition.Y - _startMousePosition.Y;
+            Tower? tower = TowerService.GetTowerByCoordinates(_startControlPosition);
+            if (Canvas.GetLeft(_target) == Canvas.GetLeft(tower.Center) && Canvas.GetTop(_target) == Canvas.GetTop(tower.Center))
+            {
+                TowerService.UpdateTower(tower, offsetX, offsetY);
+            }
 
-            Canvas.SetLeft(_target, _startControlPosition.X + offsetX);
-            Canvas.SetTop(_target, _startControlPosition.Y + offsetY);
+            Receiver? receiver = ReceiverService.GetTowerByCoordinates(currentMousePosition);
+            if (receiver != null)
+            {
+                ReceiverService.UpdateReceiver(receiver, offsetX, offsetY);
+            }
         }
 
         private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             if (_target == null) return;
 
+            // Завершаем перетаскивание
             _isDragging = false;
+
+            // Возвращаем стандартный курсор
             _target.Cursor = new Cursor(StandardCursorType.Arrow);
 
-            var x = Canvas.GetLeft(_target);
-            var y = Canvas.GetTop(_target);
-            OnDragEnded?.Invoke(x, y);
+            // Получаем финальную позицию объекта
+            Point finalPosition = e.GetPosition(_target.Parent as Visual);
+
+            double offsetX = finalPosition.X - _startMousePosition.X;
+            double offsetY = finalPosition.Y - _startMousePosition.Y;
+
+            Tower? tower = TowerService.GetTowerByCoordinates(finalPosition);
+            if (Canvas.GetLeft(_target) == Canvas.GetLeft(tower.Center) && Canvas.GetTop(_target) == Canvas.GetTop(tower.Center))
+            {
+                TowerService.UpdateTower(tower, offsetX, offsetY);
+            }
+
+            Receiver? receiver = ReceiverService.GetTowerByCoordinates(finalPosition);
+            if (receiver != null)
+            {
+                ReceiverService.UpdateReceiver(receiver, offsetX, offsetY);
+            }
+        }
+
+        private void OnPointerEnter(object? sender, PointerEventArgs e)
+        {
+            if (_target != null)
+                _target.Cursor = new Cursor(StandardCursorType.Hand);
+        }
+
+        private void OnPointerLeave(object? sender, PointerEventArgs e)
+        {
+            if (_target != null && !_isDragging)
+                _target.Cursor = new Cursor(StandardCursorType.Arrow);
         }
     }
 }

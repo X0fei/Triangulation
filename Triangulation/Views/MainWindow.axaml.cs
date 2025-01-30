@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
+using Triangulation.Behaviors;
 using Triangulation.Models;
 using Triangulation.Services;
 
@@ -11,12 +12,15 @@ namespace Triangulation
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DraggablePointBehavior _draggablePointBehavior;
+        
         /// <summary>
         /// Инициализирует новое окно и компоненты интерфейса.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+            _draggablePointBehavior = new DraggablePointBehavior();
             AddReceiver();
         }
 
@@ -46,6 +50,11 @@ namespace Triangulation
             Tower newTower = new Tower(200, 200, 100);
             TowerService.AddTower(newTower);
             TowerService.AddTowerToCanvas(MainCanvas, newTower);
+
+            foreach (Tower tower in TowerService.GetAllTowers())
+            {
+                _draggablePointBehavior.Attach(tower.Center);
+            }
         }
     }
 }

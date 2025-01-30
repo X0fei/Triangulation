@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using System;
 using Triangulation.Models;
 
@@ -33,12 +34,42 @@ namespace Triangulation.Services
         /// <param name="receiver">Приёмник, который нужно добавить.</param>
         public static void AddReceiverToCanvas(Canvas canvas, Receiver receiver)
         {
+            _receiver = receiver;
+
             // Устанавливаем позицию для приёмника
             Canvas.SetLeft(receiver.Point, receiver.X - receiver.Point.Width / 2);
             Canvas.SetTop(receiver.Point, receiver.Y - receiver.Point.Height / 2);
 
             // Добавляем приёмник на Canvas
             canvas.Children.Add(receiver.Point);
+        }
+
+        public static void UpdateReceiver(Receiver receiver, double offsetX, double offsetY)
+        {
+            // Обновляем позиции для радиуса и центра
+            if (receiver == _receiver)
+            {
+                _receiver.X += offsetX;
+                _receiver.Y += offsetY;
+
+                Canvas.SetLeft(_receiver.Point, _receiver.X - _receiver.Point.Width / 2);
+                Canvas.SetTop(_receiver.Point, _receiver.Y - _receiver.Point.Height / 2);
+            }
+        }
+
+        /// <summary>
+        /// Получает приёмник по его координатам.
+        /// </summary>
+        public static Receiver? GetTowerByCoordinates(Point coordinates)
+        {
+            if (_receiver.X == coordinates.X && _receiver.Y == coordinates.Y)
+            {
+                return _receiver;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
