@@ -13,8 +13,12 @@ namespace Triangulation.Services
     /// <summary>
     /// Сервис для работы с вышками и их отображением на холсте.
     /// </summary>
-    public class TowerService
+    public static class TowerService
     {
+        /// <summary>
+        /// Список для хранения объектов класса <see cref="Tower"/>.
+        /// </summary>
+        /// /// <value>Список вышек.</value>
         private static List<Tower> _towers = new List<Tower>();
 
         /// <summary>
@@ -33,46 +37,21 @@ namespace Triangulation.Services
         }
 
         /// <summary>
-        /// Добавляет радиус покрытия вышки на холст в виде окружности.
+        /// Добавляет вышку (с её радиусом и центром) на Canvas.
         /// </summary>
-        /// <param name="tower">Объект вышки, для которой нужно создать окружность радиуса покрытия.</param>
-        /// <returns>Возвращает объект <see cref="Ellipse"/>, представляющий радиус покрытия вышки.</returns>
-        public static Ellipse AddTowerCoverageRadiusToCanvas(Tower tower)
+        /// <param name="canvas">Canvas, на который нужно добавить вышку.</param>
+        /// <param name="tower">Вышка, которую нужно добавить.</param>
+        public static void AddTowerToCanvas(Canvas canvas, Tower tower)
         {
-            Ellipse towerCoverageRadius = new Ellipse
-            {
-                Width = tower.Radius * 2,
-                Height = tower.Radius * 2,
-                Fill = Brushes.Green,
-                Opacity = 100,
-                Stroke = Brushes.DarkGreen,
-                StrokeThickness = 2
-            };
+            // Устанавливаем позиции для радиуса и центра
+            Canvas.SetLeft(tower.Coverage, tower.X - tower.Coverage.Width / 2);
+            Canvas.SetTop(tower.Coverage, tower.Y - tower.Coverage.Height / 2);
+            Canvas.SetLeft(tower.Center, tower.X - tower.Center.Width / 2);
+            Canvas.SetTop(tower.Center, tower.Y - tower.Center.Height / 2);
 
-            Canvas.SetLeft(towerCoverageRadius, tower.X - towerCoverageRadius.Width / 2);
-            Canvas.SetTop(towerCoverageRadius, tower.Y - towerCoverageRadius.Height / 2);
-
-            return towerCoverageRadius;
-        }
-
-        /// <summary>
-        /// Добавляет центр вышки на холст в виде маленькой черной окружности.
-        /// </summary>
-        /// <param name="tower">Объект вышки, для которой нужно создать точку центра.</param>
-        /// <returns>Возвращает объект <see cref="Ellipse"/>, представляющий центр вышки.</returns>
-        public static Ellipse AddTowerCenterToCanvas(Tower tower)
-        {
-            Ellipse towerCenter = new Ellipse
-            {
-                Width = 10,
-                Height = 10,
-                Fill = Brushes.Black
-            };
-
-            Canvas.SetLeft(towerCenter, tower.X - towerCenter.Width / 2);
-            Canvas.SetTop(towerCenter, tower.Y - towerCenter.Height / 2);
-
-            return towerCenter;
+            // Добавляем элементы на Canvas
+            canvas.Children.Add(tower.Coverage);
+            canvas.Children.Add(tower.Center);
         }
     }
 }
