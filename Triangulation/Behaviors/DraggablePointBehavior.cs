@@ -4,6 +4,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using System;
+using System.Collections.Generic;
 using Triangulation.Models;
 using Triangulation.Services;
 
@@ -16,6 +17,7 @@ namespace Triangulation.Behaviors
     {
         private bool _isDragging = false; // Флаг, отслеживающий, тянем ли объект
         private Control? _target; // Объект, который мы перетаскиваем
+        private List<Control> _targets = new List<Control>();
         private Point _startMousePosition; // Начальная позиция мыши при начале перетаскивания
         private Point _startControlPosition; // Начальная позиция объекта
 
@@ -25,6 +27,9 @@ namespace Triangulation.Behaviors
         /// <param name="control">Элемент, который будет перемещаться.</param>
         public void Attach(Control control)
         {
+            _targets.Add(control);
+            int id = _targets.Count - 1;
+
             _target = control;
 
             //"Подписываем" объект на события
@@ -33,6 +38,12 @@ namespace Triangulation.Behaviors
             _target.PointerReleased += OnPointerReleased;
             _target.PointerEntered += OnPointerEnter;
             _target.PointerExited += OnPointerLeave;
+
+            _targets[id].PointerPressed += OnPointerPressed;
+            _targets[id].PointerMoved += OnPointerMoved;
+            _targets[id].PointerReleased += OnPointerReleased;
+            _targets[id].PointerEntered += OnPointerEnter;
+            _targets[id].PointerExited += OnPointerLeave;
         }
 
         private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
