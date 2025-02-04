@@ -30,7 +30,7 @@ namespace Triangulation.Behaviors
             //"Подписываем" объект на события
             _target.PointerPressed += OnPointerPressed;
             _target.PointerMoved += OnPointerMoved;
-            //_target.PointerReleased += OnPointerReleased;
+            _target.PointerReleased += OnPointerReleased;
             _target.PointerEntered += OnPointerEnter;
             _target.PointerExited += OnPointerLeave;
         }
@@ -47,22 +47,14 @@ namespace Triangulation.Behaviors
 
         private void OnPointerMoved(object? sender, PointerEventArgs e)
         {
-            if (!_isDragging || _target == null) return;
-
-            Point currentMousePosition = e.GetPosition(_target.Parent as Visual);
-            double offsetX = currentMousePosition.X - _startMousePosition.X;
-            double offsetY = currentMousePosition.Y - _startMousePosition.Y;
-
-            Tower? tower = TowerService.GetTowerByCoordinates(_startControlPosition);
-            if (Canvas.GetLeft(_target) == Canvas.GetLeft(tower.Center) && Canvas.GetTop(_target) == Canvas.GetTop(tower.Center))
+            if (_isDragging == true && _target != null)
             {
-                TowerService.UpdateTower(tower, offsetX, offsetY);
-            }
+                Point currentMousePosition = e.GetPosition(_target.Parent as Visual);
+                double offsetX = currentMousePosition.X - _startMousePosition.X;
+                double offsetY = currentMousePosition.Y - _startMousePosition.Y;
 
-            Receiver? receiver = ReceiverService.GetTowerByCoordinates(currentMousePosition);
-            if (receiver != null)
-            {
-                ReceiverService.UpdateReceiver(receiver, offsetX, offsetY);
+                Tower? tower = TowerService.GetTowerByCoordinates(_startControlPosition);
+                TowerService.UpdateTowerCanvas(tower, offsetX, offsetY, true);
             }
         }
 
@@ -73,26 +65,14 @@ namespace Triangulation.Behaviors
             // Завершаем перетаскивание
             _isDragging = false;
 
-            // Возвращаем стандартный курсор
-            _target.Cursor = new Cursor(StandardCursorType.Arrow);
-
             // Получаем финальную позицию объекта
             Point finalPosition = e.GetPosition(_target.Parent as Visual);
 
             double offsetX = finalPosition.X - _startMousePosition.X;
             double offsetY = finalPosition.Y - _startMousePosition.Y;
 
-            Tower? tower = TowerService.GetTowerByCoordinates(finalPosition);
-            if (Canvas.GetLeft(_target) == Canvas.GetLeft(tower.Center) && Canvas.GetTop(_target) == Canvas.GetTop(tower.Center))
-            {
-                TowerService.UpdateTower(tower, offsetX, offsetY);
-            }
-
-            Receiver? receiver = ReceiverService.GetTowerByCoordinates(finalPosition);
-            if (receiver != null)
-            {
-                ReceiverService.UpdateReceiver(receiver, offsetX, offsetY);
-            }
+            Tower? tower = TowerService.GetTowerByCoordinates(_startControlPosition);
+            TowerService.UpdateTowerCanvas(tower, offsetX, offsetY, false);
         }
 
         private void OnPointerEnter(object? sender, PointerEventArgs e)

@@ -60,21 +60,27 @@ namespace Triangulation.Services
             canvas.Children.Add(tower.Center);
         }
 
-        public static void UpdateTower(Tower tower, double offsetX, double offsetY)
+        public static void UpdateTowerCanvas(Tower tower, double offsetX, double offsetY, bool isDragging)
         {
             Tower? towerInList = _towers.Find(t => t == tower);
+            int id = _towers.IndexOf(towerInList);
             
             // Обновляем позиции для радиуса и центра
             if (towerInList != null)
             {
-                towerInList.X += offsetX;
-                towerInList.Y += offsetY;
+                Canvas.SetLeft(towerInList.Coverage, towerInList.X - towerInList.Coverage.Width / 2 + offsetX);
+                Canvas.SetTop(towerInList.Coverage, towerInList.Y - towerInList.Coverage.Height / 2 + offsetY);
+                Canvas.SetLeft(towerInList.Center, towerInList.X - towerInList.Center.Width / 2 + offsetX);
+                Canvas.SetTop(towerInList.Center, towerInList.Y - towerInList.Center.Height / 2 + offsetY);
 
-                Canvas.SetLeft(towerInList.Coverage, towerInList.X - towerInList.Coverage.Width / 2);
-                Canvas.SetTop(towerInList.Coverage, towerInList.Y - towerInList.Coverage.Height / 2);
-                Canvas.SetLeft(towerInList.Center, towerInList.X - towerInList.Center.Width / 2);
-                Canvas.SetTop(towerInList.Center, towerInList.Y - towerInList.Center.Height / 2);
+                if (isDragging == false)
+                {
+                    towerInList.X += offsetX;
+                    towerInList.Y += offsetY;
+                }
             }
+            
+            _towers[id] = towerInList;
         }
 
         /// <summary>
@@ -82,7 +88,7 @@ namespace Triangulation.Services
         /// </summary>
         public static Tower? GetTowerByCoordinates(Point coordinates)
         {
-            return _towers.FirstOrDefault(tower => tower.X == coordinates.X && tower.Y == coordinates.Y);
+            return _towers.FirstOrDefault(tower => tower.X == coordinates.X + 5 && tower.Y == coordinates.Y + 5);
         }
     }
 }

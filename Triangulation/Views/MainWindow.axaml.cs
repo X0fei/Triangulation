@@ -38,6 +38,7 @@ namespace Triangulation
             Receiver newReceiver = new Receiver(centerX, centerY);
             ReceiverService.SetReceiver(newReceiver);
             ReceiverService.AddReceiverToCanvas(MainCanvas, newReceiver);
+            //_draggablePointBehavior.Attach(ReceiverService.GetReceiver());
         }
 
         /// <summary>

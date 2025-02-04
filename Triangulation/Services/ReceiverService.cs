@@ -44,6 +44,11 @@ namespace Triangulation.Services
             canvas.Children.Add(receiver.Point);
         }
 
+        public static Receiver GetReceiver()
+        {
+            return _receiver;
+        }
+
         public static void UpdateReceiver(Receiver receiver, double offsetX, double offsetY)
         {
             // Обновляем позиции для радиуса и центра
@@ -60,7 +65,7 @@ namespace Triangulation.Services
         /// <summary>
         /// Получает приёмник по его координатам.
         /// </summary>
-        public static Receiver? GetTowerByCoordinates(Point coordinates)
+        public static Receiver? GetReceiverByCoordinates(Point coordinates)
         {
             if (_receiver.X == coordinates.X && _receiver.Y == coordinates.Y)
             {
